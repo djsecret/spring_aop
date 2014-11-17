@@ -13,6 +13,38 @@
     <context:component-scan base-package="com.neu.calculator"/>
     <context:component-scan base-package="com.neu.calculator_introduction"/>
     <context:component-scan base-package="com.neu.counter"/>
-
+    <!--
     <aop:aspectj-autoproxy/>
+    -->
+
+    <aop:config>
+        <aop:pointcut id="loggingOperation" expression="execution(* com.neu.calculator.Calculator.*(..))"/>
+
+        <aop:aspect id="loggingAspect" ref="calculatorLoggingAspect" order="1">
+            <aop:before method="logBefore" pointcut-ref="loggingOperation"/>
+            <aop:after-returning method="logAfterReturning" pointcut-ref="loggingOperation" returning="result"/>
+            <aop:after-throwing method="logAfterThrowing" pointcut-ref="loggingOperation" throwing="e"/>
+        </aop:aspect>
+
+        <aop:aspect id="validationAspect" ref="calculatorValidationAspect" order="0">
+            <aop:before method="validationBefore" pointcut-ref="loggingOperation"/>
+        </aop:aspect>
+        <!--  引入行为  -->
+        <aop:aspect id="introduction" ref="calculatorIntroduction">
+            <aop:declare-parents types-matching="com.neu.calculator.CalculatorImpl"
+                                 implement-interface="com.neu.calculator_introduction.MaxCalculator"
+                                 default-impl="com.neu.calculator_introduction.impl.MaxCalculatorImpl"/>
+            <aop:declare-parents types-matching="com.neu.calculator.CalculatorImpl"
+                                 implement-interface="com.neu.calculator_introduction.MinCalculator"
+                                 default-impl="com.neu.calculator_introduction.impl.MinCalculatorImpl"/>
+        </aop:aspect>
+        <!--  引入状态  -->
+        <aop:aspect id="counterIntroduction" ref="counterIntroduction">
+            <aop:declare-parents types-matching="com.neu.calculator.CalculatorImpl"
+                                 implement-interface="com.neu.counter.Counter"
+                                 default-impl="com.neu.counter.impl.CounterImpl"/>
+            <aop:after method="increaseCount"
+                       pointcut="execution(* com.neu.calculator.Calculator.*(..)) and this(counter)"/>
+        </aop:aspect>
+    </aop:config>
 </beans>
