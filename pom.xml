@@ -45,6 +45,13 @@
             <version>${aspectj.version}</version>
         </dependency>
 
+        <!--  log4j  -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+
         <!--  test  -->
         <dependency>
             <groupId>org.springframework</groupId>
